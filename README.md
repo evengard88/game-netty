@@ -105,7 +105,7 @@
 
 
 <p align="right">(<a href="#readme-top">back to top</a>)</p>
-a
+
 ## <a id="tech-details"/>Технические детали
 
 Переключитесь на нужную ветку.
