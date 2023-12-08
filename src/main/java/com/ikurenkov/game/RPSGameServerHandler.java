@@ -14,8 +14,8 @@ import java.util.concurrent.TimeUnit;
 @Log
 @ChannelHandler.Sharable
 public class RPSGameServerHandler extends SimpleChannelInboundHandler<String> {
-    static private final AttributeKey<Player> PLAYER_ATTRIBUTE_KEY = AttributeKey.valueOf("player");
-    static private final AttributeKey<Player> OPPONENT_ATTRIBUTE_KEY = AttributeKey.valueOf("opponent");
+    private static final AttributeKey<Player> PLAYER_ATTRIBUTE_KEY = AttributeKey.valueOf("player");
+    private static final AttributeKey<Player> OPPONENT_ATTRIBUTE_KEY = AttributeKey.valueOf("opponent");
     private final BlockingQueue<Player> lobby;
 
     @Inject
