@@ -79,12 +79,24 @@ public class RPSGameServerHandler extends SimpleChannelInboundHandler<String> {
                         player.getChanel().writeAndFlush("You won!\n\r");
                         opponent.getChanel().writeAndFlush("You lost!\n\r");
 
+                        player.getChanel().attr(PLAYER_ATTRIBUTE_KEY).set(null);
+                        player.getChanel().attr(OPPONENT_ATTRIBUTE_KEY).set(null);
+
+                        opponent.getChanel().attr(PLAYER_ATTRIBUTE_KEY).set(null);
+                        opponent.getChanel().attr(OPPONENT_ATTRIBUTE_KEY).set(null);
+
                         player.getChanel().close();
                         opponent.getChanel().close();
                     }
                     case PLAYER1_lOSES -> {
                         player.getChanel().writeAndFlush("You lost!\n\r");
                         opponent.getChanel().writeAndFlush("You won!\n\r");
+
+                        player.getChanel().attr(PLAYER_ATTRIBUTE_KEY).set(null);
+                        player.getChanel().attr(OPPONENT_ATTRIBUTE_KEY).set(null);
+
+                        opponent.getChanel().attr(PLAYER_ATTRIBUTE_KEY).set(null);
+                        opponent.getChanel().attr(OPPONENT_ATTRIBUTE_KEY).set(null);
 
                         player.getChanel().close();
                         opponent.getChanel().close();
