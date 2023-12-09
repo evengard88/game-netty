@@ -11,15 +11,18 @@ import lombok.extern.java.Log;
 import java.util.List;
 import java.util.Optional;
 import java.util.Set;
+import java.util.concurrent.BlockingQueue;
 
 @Log
 public class GameServiceImpl implements GameService {
 
     private final Set<GameHandler> gameHandlers;
+    private final BlockingQueue<GameContext> lobby;
 
     @Inject
-    public GameServiceImpl(Set<GameHandler> gameHandlers) {
+    public GameServiceImpl(Set<GameHandler> gameHandlers, BlockingQueue<GameContext> lobby) {
         this.gameHandlers = gameHandlers;
+        this.lobby = lobby;
     }
 
     @Override
@@ -45,7 +48,8 @@ public class GameServiceImpl implements GameService {
 
     @Override
     public void disconnect(GameContext context) {
-        Optional.ofNullable(context)
+        lobby.remove(context.getActor());
+        Optional.of(context)
                 .map(GameContext::getGame)
                 .map(g -> g.getOpponent(context.getActor()))
                 .ifPresent(p -> p.sendMassage("Your opponent left! You won!"));
