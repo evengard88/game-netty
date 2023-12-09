@@ -48,7 +48,7 @@ public class GameServiceImpl implements GameService {
 
     @Override
     public void disconnect(GameContext context) {
-        lobby.remove(context.getActor());
+        lobby.remove(context);
         Optional.of(context)
                 .map(GameContext::getGame)
                 .map(g -> g.getOpponent(context.getActor()))
