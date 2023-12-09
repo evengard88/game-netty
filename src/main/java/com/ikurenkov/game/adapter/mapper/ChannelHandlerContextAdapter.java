@@ -7,8 +7,6 @@ import io.netty.channel.Channel;
 import io.netty.channel.ChannelHandlerContext;
 import io.netty.util.AttributeKey;
 
-import java.util.Optional;
-
 public class ChannelHandlerContextAdapter implements GameContext {
     private final Channel serverChanel;
 
@@ -17,13 +15,13 @@ public class ChannelHandlerContextAdapter implements GameContext {
     }
 
     @Override
-    public Optional<Player> getActor() {
-        return Optional.ofNullable(serverChanel.attr(KeyAttributes.PLAYER_ATTRIBUTE_KEY).get());
+    public Player getActor() {
+        return serverChanel.attr(KeyAttributes.PLAYER_ATTRIBUTE_KEY).get();
     }
 
     @Override
-    public Optional<Game> getGame() {
-        return Optional.ofNullable(serverChanel.attr(KeyAttributes.GAME_ATTRIBUTE_KEY).get());
+    public Game getGame() {
+        return serverChanel.attr(KeyAttributes.GAME_ATTRIBUTE_KEY).get();
     }
 
     @Override

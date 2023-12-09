@@ -21,12 +21,6 @@ public class Player {
         return name;
     }
 
-    public void setMove(Move move) {
-        Objects.requireNonNull(move);
-        this.move = move;
-        this.state = PlayerState.MOVE_DONE;
-    }
-
     public Move getMove() {
         return move;
     }
@@ -34,6 +28,14 @@ public class Player {
     public PlayerState getState() {
         return state;
     }
+
+    public void setMove(Move move) {
+        Objects.requireNonNull(move);
+        assert (state == PlayerState.MOVE_AWAIT);
+        this.move = move;
+        this.state = PlayerState.MOVE_DONE;
+    }
+
 
     public void setName(String name) {
         Objects.requireNonNull(name);

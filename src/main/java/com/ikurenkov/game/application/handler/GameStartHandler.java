@@ -10,10 +10,10 @@ import lombok.SneakyThrows;
 import java.util.concurrent.BlockingQueue;
 
 public class GameStartHandler implements GameHandler {
-    private final BlockingQueue<Player> lobby;
+    private final BlockingQueue<GameContext> lobby;
 
     @Inject
-    public GameStartHandler(BlockingQueue<Player> lobby) {
+    public GameStartHandler(BlockingQueue<GameContext> lobby) {
         this.lobby = lobby;
     }
 
@@ -21,14 +21,17 @@ public class GameStartHandler implements GameHandler {
     @Override
     public void handle(GameContext context, String message) {
         if (supports(context)) {
-            context.getActor().ifPresent(p -> p.sendMassage("Searching for opponent..."));
-            Player actor = context.getActor().get();
-            Player secondPlayer = lobby.poll();
-            if (secondPlayer == null) {
-                lobby.add(actor);
+            Player actor = context.getActor();
+            actor.sendMassage("Searching for opponent...");
+            GameContext secondGameContext = lobby.poll();
+            if (secondGameContext == null) {
+                lobby.add(context);
                 actor.sendMassage("No opponent available! Wait for opponent.");
             } else {
-                context.setGame(new Game(actor, secondPlayer));
+                Player secondPlayer = secondGameContext.getActor();
+                Game game = new Game(actor, secondPlayer);
+                context.setGame(game);
+                secondGameContext.setGame(game);
 
                 actor.sendMassage("Your opponent is " + secondPlayer.getName() + "!");
                 secondPlayer.sendMassage("Your opponent is " + actor.getName() + "!");
@@ -41,7 +44,7 @@ public class GameStartHandler implements GameHandler {
 
     @Override
     public boolean supports(GameContext context) {
-        return context.getActor().isPresent() && context.getGame().isEmpty();
+        return context.getGame() == null;
     }
 
 }

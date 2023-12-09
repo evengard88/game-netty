@@ -46,8 +46,8 @@ public class GameServiceImpl implements GameService {
     @Override
     public void disconnect(GameContext context) {
         Optional.ofNullable(context)
-                .flatMap(GameContext::getGame)
-                .map(g -> g.getOpponent(context.getActor().orElse(null)))
+                .map(GameContext::getGame)
+                .map(g -> g.getOpponent(context.getActor()))
                 .ifPresent(p -> p.sendMassage("Your opponent left! You won!"));
     }
 }

@@ -2,7 +2,6 @@ package com.ikurenkov.game.application.handler;
 
 import com.google.common.base.Strings;
 import com.google.inject.Inject;
-import com.ikurenkov.game.domain.Player;
 import com.ikurenkov.game.application.GameContext;
 import com.ikurenkov.game.application.GameHandler;
 
@@ -17,19 +16,19 @@ public class PlayerEnterNameHandler implements GameHandler {
 
     @Override
     public void handle(GameContext context, String message) {
-        if (isValid(context, message)) {
-            context.getActor().ifPresent(a -> a.setName(message));
-            context.getActor().ifPresent(p->p.sendMassage("Welcome, " + p.getName() + "!"));
+        if (isValid(message)) {
+            context.getActor().setName(message);
+            context.getActor().sendMassage("Welcome, " + context.getActor().getName() + "!");
             nextHandler.handle(context, message);
         }
     }
 
     @Override
     public boolean supports(GameContext context) {
-        return context.getActor().map(Player::requiresName).orElse(false);
+        return context.getActor().requiresName();
     }
 
-    protected boolean isValid(GameContext context, String message) {
+    protected boolean isValid(String message) {
         return !Strings.isNullOrEmpty(message);
     }
 }
