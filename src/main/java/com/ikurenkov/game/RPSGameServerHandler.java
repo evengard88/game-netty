@@ -113,17 +113,11 @@ public class RPSGameServerHandler extends SimpleChannelInboundHandler<String> {
         return Move.findByNameOrValue(msg) != null;
     }
 
-
-    @Override
-    public void channelUnregistered(ChannelHandlerContext ctx) throws Exception {
-        log.info("unregistered handler, id = " + ctx.channel().id());
-        super.channelUnregistered(ctx);
-    }
-
     @Override
     public void channelInactive(ChannelHandlerContext ctx) throws Exception {
         log.info("inactive handler, id = " + ctx.channel().id());
         finishOpponentContextWithVictory(ctx);
+        lobby.remove(ctx.channel().attr(PLAYER_ATTRIBUTE_KEY).get());
         super.channelInactive(ctx);
     }
 
