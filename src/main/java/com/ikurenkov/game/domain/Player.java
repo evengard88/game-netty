@@ -25,10 +25,6 @@ public class Player {
         return move;
     }
 
-    public PlayerState getState() {
-        return state;
-    }
-
     public void setMove(Move move) {
         Objects.requireNonNull(move);
         assert (state == PlayerState.MOVE_AWAIT);
@@ -39,6 +35,7 @@ public class Player {
 
     public void setName(String name) {
         Objects.requireNonNull(name);
+        assert (state == PlayerState.NAME_AWAIT);
         this.name = name;
         this.state = PlayerState.MOVE_AWAIT;
     }
