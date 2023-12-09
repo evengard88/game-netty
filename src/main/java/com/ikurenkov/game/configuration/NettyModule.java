@@ -2,6 +2,7 @@ package com.ikurenkov.game.configuration;
 
 import com.google.inject.AbstractModule;
 import com.google.inject.Provides;
+import com.google.inject.Singleton;
 import com.ikurenkov.game.NettyServer;
 import com.ikurenkov.game.adapter.in.RPSGameServerHandler;
 import io.netty.channel.ChannelInitializer;
@@ -34,17 +35,20 @@ public class NettyModule extends AbstractModule {
 
     @Provides
     @BossGroupLoop
+    @Singleton
     public EventLoopGroup providesBossEventLoopGroup() {
         return new NioEventLoopGroup(1);
     }
 
     @Provides
     @WorkerGroupLoop
+    @Singleton
     public EventLoopGroup providesWorkerEventLoopGroup() {
         return new NioEventLoopGroup();
     }
 
     @Provides
+    @Singleton
     public ChannelInitializer<NioSocketChannel> channelInitializer(StringEncoder encoder,
                                                                    StringDecoder decoder,
                                                                    RPSGameServerHandler gameHandler) {
@@ -62,6 +66,7 @@ public class NettyModule extends AbstractModule {
 
     @Provides
     @Port
+    @Singleton
     public int getPort() {
         return port;
     }

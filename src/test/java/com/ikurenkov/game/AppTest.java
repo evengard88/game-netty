@@ -14,7 +14,7 @@ public class AppTest {
     @Test
     public void happyPath() {
         // Create an EmbeddedChannel with the EchoHandler
-        RPSGameServerHandler rpsGameServerHandler = new RPSGameServerHandler(new HashSet<>());
+        RPSGameServerHandler rpsGameServerHandler = new RPSGameServerHandler(null);
         EmbeddedChannel channel = new EmbeddedChannel(DefaultChannelId.newInstance(), rpsGameServerHandler);
         EmbeddedChannel channel2 = new EmbeddedChannel(DefaultChannelId.newInstance(), rpsGameServerHandler);
 

@@ -21,12 +21,19 @@ public class Player {
         state = PlayerState.MOVE_AWAIT;
     }
 
+    public void removeMove() {
+        this.move = null;
+        state = PlayerState.MOVE_AWAIT;
+    }
+
     public void setMove(Move move) {
         this.move = move;
+        this.state = PlayerState.MOVE_DONE;
     }
 
     public enum PlayerState {
         NAME_AWAIT,
-        MOVE_AWAIT
+        MOVE_AWAIT,
+        MOVE_DONE
     }
 }
