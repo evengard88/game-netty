@@ -4,7 +4,7 @@
 
     <groupId>com.ikurenkov</groupId>
     <artifactId>RPS-server</artifactId>
-    <version>0.1</version>
+    <version>0.3</version>
     <packaging>jar</packaging>
 
     <name>rock-paper-scissors-server</name>

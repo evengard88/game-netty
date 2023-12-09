@@ -1,8 +1,11 @@
 package com.ikurenkov.game.adapter.in;
 
 import com.google.inject.Inject;
-import com.ikurenkov.game.GameService;
-import com.ikurenkov.game.KeyAttributes;
+import com.ikurenkov.game.adapter.mapper.ChannelHandlerContextAdapter;
+import com.ikurenkov.game.adapter.mapper.ChannelHandlerMessageAdapter;
+import com.ikurenkov.game.application.GameContext;
+import com.ikurenkov.game.application.GameService;
+import com.ikurenkov.game.application.PlayerMessagePort;
 import io.netty.channel.ChannelHandler;
 import io.netty.channel.ChannelHandlerContext;
 import io.netty.channel.SimpleChannelInboundHandler;
@@ -21,27 +24,29 @@ public class RPSGameServerHandler extends SimpleChannelInboundHandler<String> {
     @Override
     public void channelRegistered(ChannelHandlerContext ctx) throws Exception {
         super.channelRegistered(ctx);
-        ctx.writeAndFlush("Hello! Enter your name, at least one symbol\n\r");
-        gameService.start(null);
+        gameService.start(mapToGameContext(ctx), mapToActorPort(ctx));
     }
 
     @Override
     protected void channelRead0(ChannelHandlerContext ctx, String message) throws InterruptedException {
-        log.info("Handler, id = " + ctx.channel().id().asLongText()
-                + " player " + ctx.channel().attr(KeyAttributes.PLAYER_ATTRIBUTE_KEY));
-        gameService.handleMessage(null, message);
+        log.info("Handler, id = " + ctx.channel().id());
+        gameService.handleMessage(mapToGameContext(ctx), message);
     }
 
     @Override
     public void channelUnregistered(ChannelHandlerContext ctx) throws Exception {
         log.info("Unregistered handler, id = " + ctx.channel().id());
-        gameService.disconnect(null);
+        gameService.disconnect(mapToGameContext(ctx));
         super.channelUnregistered(ctx);
     }
 
-    @Override
-    public void channelInactive(ChannelHandlerContext ctx) throws Exception {
-        log.info("Inactive handler, id = " + ctx.channel().id());
-        super.channelInactive(ctx);
+    private static GameContext mapToGameContext(ChannelHandlerContext ctx) {
+        return new ChannelHandlerContextAdapter(ctx);
     }
+
+    private static PlayerMessagePort mapToActorPort(ChannelHandlerContext ctx) {
+        return new ChannelHandlerMessageAdapter(ctx);
+    }
+
+
 }

@@ -1,34 +1,69 @@
 package com.ikurenkov.game.domain;
 
 import com.ikurenkov.game.Move;
-import lombok.RequiredArgsConstructor;
+import com.ikurenkov.game.application.PlayerMessagePort;
 import lombok.ToString;
 
-@RequiredArgsConstructor
+import java.util.Objects;
+
 @ToString
 public class Player {
+    private final PlayerMessagePort port;
     private volatile PlayerState state = PlayerState.NAME_AWAIT;
     private volatile String name;
     private volatile Move move;
+
+    public Player(PlayerMessagePort port) {
+        this.port = port;
+    }
+
+    public String getName() {
+        return name;
+    }
+
+    public void setMove(Move move) {
+        Objects.requireNonNull(move);
+        this.move = move;
+        this.state = PlayerState.MOVE_DONE;
+    }
+
+    public Move getMove() {
+        return move;
+    }
 
     public PlayerState getState() {
         return state;
     }
 
-
     public void setName(String name) {
+        Objects.requireNonNull(name);
         this.name = name;
-        state = PlayerState.MOVE_AWAIT;
+        this.state = PlayerState.MOVE_AWAIT;
+    }
+
+    public void sendMassage(String message) {
+        port.say(message + "\n\r");
+    }
+
+    public void disconnect(String message) {
+        port.disconnect(message + "\n\r");
     }
 
     public void removeMove() {
         this.move = null;
-        state = PlayerState.MOVE_AWAIT;
+        this.state = PlayerState.MOVE_AWAIT;
     }
 
-    public void setMove(Move move) {
-        this.move = move;
-        this.state = PlayerState.MOVE_DONE;
+    public boolean requiresName() {
+        return state == PlayerState.NAME_AWAIT;
+    }
+
+    public boolean requiresMove() {
+        return state == PlayerState.MOVE_AWAIT;
+    }
+
+    public boolean requiresResult() {
+        return state == PlayerState.MOVE_DONE;
     }
 
     public enum PlayerState {

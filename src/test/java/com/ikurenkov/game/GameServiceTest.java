@@ -1,5 +1,6 @@
 package com.ikurenkov.game;
 
+import com.ikurenkov.game.application.GameService;
 import com.ikurenkov.game.configuration.GameRulesModule;
 import org.junit.jupiter.api.Test;
 
