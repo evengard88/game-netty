@@ -15,7 +15,7 @@ public enum Move {
 
     public static Move findByNameOrValue(String s) {
         for (Move m : values()) {
-            if (Objects.equals(s, m.value) || Objects.equals(s, m.name())) {
+            if (Objects.equals(s, m.value) || Objects.equals(s.toLowerCase(), m.name().toLowerCase())) {
                 return m;
             }
         }

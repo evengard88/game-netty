@@ -1,9 +1,9 @@
-package com.ikurenkov.game.module;
+package com.ikurenkov.game.configuration;
 
 import com.google.inject.AbstractModule;
 import com.google.inject.Provides;
 import com.ikurenkov.game.NettyServer;
-import com.ikurenkov.game.RPSGameServerHandler;
+import com.ikurenkov.game.adapter.in.RPSGameServerHandler;
 import io.netty.channel.ChannelInitializer;
 import io.netty.channel.ChannelPipeline;
 import io.netty.channel.EventLoopGroup;

@@ -1,7 +1,7 @@
 package com.ikurenkov.game;
 
 import com.google.inject.Inject;
-import com.ikurenkov.game.module.NettyModule;
+import com.ikurenkov.game.configuration.NettyModule;
 import io.netty.bootstrap.ServerBootstrap;
 import io.netty.channel.ChannelFuture;
 import io.netty.channel.ChannelInitializer;
@@ -19,7 +19,6 @@ public class NettyServer {
 
     private final EventLoopGroup bossGroup;
     private final EventLoopGroup workerGroup;
-
 
     @Inject
     public NettyServer(@NettyModule.Port int port,

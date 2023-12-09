@@ -1,10 +1,12 @@
 package com.ikurenkov.game;
 
+import com.ikurenkov.game.adapter.in.RPSGameServerHandler;
 import io.netty.channel.DefaultChannelId;
 import io.netty.channel.embedded.EmbeddedChannel;
 import org.junit.jupiter.api.Test;
 
-import java.util.concurrent.LinkedBlockingQueue;
+import java.util.HashMap;
+import java.util.HashSet;
 
 import static org.junit.jupiter.api.Assertions.*;
 
@@ -12,7 +14,7 @@ public class AppTest {
     @Test
     public void happyPath() {
         // Create an EmbeddedChannel with the EchoHandler
-        RPSGameServerHandler rpsGameServerHandler = new RPSGameServerHandler(new LinkedBlockingQueue<>());
+        RPSGameServerHandler rpsGameServerHandler = new RPSGameServerHandler(new HashSet<>());
         EmbeddedChannel channel = new EmbeddedChannel(DefaultChannelId.newInstance(), rpsGameServerHandler);
         EmbeddedChannel channel2 = new EmbeddedChannel(DefaultChannelId.newInstance(), rpsGameServerHandler);
 
@@ -72,4 +74,6 @@ public class AppTest {
         assertFalse(channel.isActive());
         assertFalse(channel2.isActive());
     }
+
+
 }
