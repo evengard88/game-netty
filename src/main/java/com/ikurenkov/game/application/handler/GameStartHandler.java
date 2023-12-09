@@ -8,7 +8,6 @@ import com.ikurenkov.game.domain.Player;
 import lombok.SneakyThrows;
 
 import java.util.concurrent.BlockingQueue;
-import java.util.concurrent.TimeUnit;
 
 public class GameStartHandler implements GameHandler {
     private final BlockingQueue<Player> lobby;
@@ -24,7 +23,7 @@ public class GameStartHandler implements GameHandler {
         if (supports(context)) {
             context.getActor().ifPresent(p -> p.sendMassage("Searching for opponent..."));
             Player actor = context.getActor().get();
-            Player secondPlayer = lobby.poll(5, TimeUnit.SECONDS);
+            Player secondPlayer = lobby.poll();
             if (secondPlayer == null) {
                 lobby.add(actor);
                 actor.sendMassage("No opponent available! Wait for opponent.");
