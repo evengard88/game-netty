@@ -2,6 +2,7 @@ package com.ikurenkov.game;
 
 import com.google.common.base.Strings;
 import com.google.inject.Inject;
+import io.netty.channel.ChannelFutureListener;
 import io.netty.channel.ChannelHandler;
 import io.netty.channel.ChannelHandlerContext;
 import io.netty.channel.SimpleChannelInboundHandler;
@@ -128,24 +129,22 @@ public class RPSGameServerHandler extends SimpleChannelInboundHandler<String> {
     }
 
     private void finishGameContextFirstWins(Player playerFirst, Player playerSecond) {
-        playerSecond.getChanel().writeAndFlush("You lost!\n\r");
-        playerFirst.getChanel().writeAndFlush("You won!\n\r");
-
         playerSecond.getChanel().attr(PLAYER_ATTRIBUTE_KEY).set(null);
         playerSecond.getChanel().attr(OPPONENT_ATTRIBUTE_KEY).set(null);
 
         playerFirst.getChanel().attr(PLAYER_ATTRIBUTE_KEY).set(null);
         playerFirst.getChanel().attr(OPPONENT_ATTRIBUTE_KEY).set(null);
 
-        playerSecond.getChanel().close();
-        playerFirst.getChanel().close();
+        playerSecond.getChanel().writeAndFlush("You lost!\n\r").addListener(ChannelFutureListener.CLOSE);
+        playerFirst.getChanel().writeAndFlush("You won!\n\r").addListener(ChannelFutureListener.CLOSE);
     }
 
     private void finishOpponentContextWithVictory(ChannelHandlerContext ctx) {
         Player opponent = ctx.attr(OPPONENT_ATTRIBUTE_KEY).getAndSet(null);
         if (opponent != null) {
-            opponent.getChanel().writeAndFlush("Your opponent left! You won!\n\r");
-            opponent.getChanel().close();
+            opponent.getChanel()
+                    .writeAndFlush("Your opponent left! You won!\n\r")
+                    .addListener(ChannelFutureListener.CLOSE);
         }
     }
 }

@@ -9,6 +9,7 @@ import java.util.concurrent.LinkedBlockingQueue;
 import static org.junit.jupiter.api.Assertions.*;
 
 public class AppTest {
+
     @Test
     public void happyPath() {
         // Create an EmbeddedChannel with the EchoHandler
@@ -37,8 +38,8 @@ public class AppTest {
         assertEquals("Enter your move: rock(1), paper(2) or scissors(3)\n\r", channel.readOutbound());
         assertEquals("Enter your move: rock(1), paper(2) or scissors(3)\n\r", channel2.readOutbound());
 
-        assertNull( channel.readOutbound());
-        assertNull( channel2.readOutbound());
+        assertNull(channel.readOutbound());
+        assertNull(channel2.readOutbound());
 
         channel.writeInbound("1");
         channel2.writeInbound("1");
@@ -71,5 +72,39 @@ public class AppTest {
 
         assertFalse(channel.isActive());
         assertFalse(channel2.isActive());
+    }
+
+    @Test
+    public void playerDisconnects() {
+        // Create an EmbeddedChannel with the EchoHandler
+        RPSGameServerHandler rpsGameServerHandler = new RPSGameServerHandler(new LinkedBlockingQueue<>());
+        EmbeddedChannel channel = new EmbeddedChannel(DefaultChannelId.newInstance(), rpsGameServerHandler);
+        EmbeddedChannel channel2 = new EmbeddedChannel(DefaultChannelId.newInstance(), rpsGameServerHandler);
+
+        assertEquals("Hello! Enter your name, at least one symbol\n\r", channel.readOutbound());
+        assertEquals("Hello! Enter your name, at least one symbol\n\r", channel2.readOutbound());
+
+        // Write a message to the channel
+        String message = "Player1";
+        String message2 = "Player2";
+        channel.writeInbound(message);
+        channel2.writeInbound(message2);
+
+        assertEquals("Welcome, Player1!\n\r", channel.readOutbound());
+        assertEquals("Searching for opponent...\n\r", channel.readOutbound());
+        assertEquals("Welcome, Player2!\n\r", channel2.readOutbound());
+        assertEquals("Searching for opponent...\n\r", channel2.readOutbound());
+
+        assertEquals("No opponent available! Wait for opponent.\n\r", channel.readOutbound());
+        assertEquals("Your opponent is Player1!\n\r", channel2.readOutbound());
+
+        assertEquals("Your opponent is Player2!\n\r", channel.readOutbound());
+
+        assertEquals("Enter your move: rock(1), paper(2) or scissors(3)\n\r", channel.readOutbound());
+        assertEquals("Enter your move: rock(1), paper(2) or scissors(3)\n\r", channel2.readOutbound());
+
+        channel.disconnect();
+        assertNull(channel.readOutbound());
+        assertEquals("Your opponent left! You won!\n\r", channel2.readOutbound());
     }
 }
