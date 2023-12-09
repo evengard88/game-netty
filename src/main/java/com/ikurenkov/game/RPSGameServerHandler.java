@@ -10,7 +10,6 @@ import io.netty.util.AttributeKey;
 import lombok.extern.java.Log;
 
 import java.util.concurrent.BlockingQueue;
-import java.util.concurrent.TimeUnit;
 
 @Log
 @ChannelHandler.Sharable
@@ -32,7 +31,7 @@ public class RPSGameServerHandler extends SimpleChannelInboundHandler<String> {
     }
 
     @Override
-    protected void channelRead0(ChannelHandlerContext ctx, String message) throws InterruptedException {
+    protected void channelRead0(ChannelHandlerContext ctx, String message) {
         log.info("handler, id = " + ctx.channel().id().asLongText()
                 + " player " + ctx.channel().attr(PLAYER_ATTRIBUTE_KEY));
         Player player = ctx.channel().attr(PLAYER_ATTRIBUTE_KEY).get();
@@ -44,7 +43,7 @@ public class RPSGameServerHandler extends SimpleChannelInboundHandler<String> {
             player.setName(message);
             ctx.writeAndFlush("Welcome, " + player.getName() + "!\n\r");
             ctx.writeAndFlush("Searching for opponent...\n\r");
-            Player secondPlayer = lobby.poll(5, TimeUnit.SECONDS);
+            Player secondPlayer = lobby.poll();
             if (secondPlayer == null) {
                 lobby.add(player);
                 player.getChanel().writeAndFlush("No opponent available! Wait for opponent.\n\r");
@@ -140,7 +139,7 @@ public class RPSGameServerHandler extends SimpleChannelInboundHandler<String> {
     }
 
     private void finishOpponentContextWithVictory(ChannelHandlerContext ctx) {
-        Player opponent = ctx.attr(OPPONENT_ATTRIBUTE_KEY).getAndSet(null);
+        Player opponent = ctx.channel().attr(OPPONENT_ATTRIBUTE_KEY).getAndSet(null);
         if (opponent != null) {
             opponent.getChanel()
                     .writeAndFlush("Your opponent left! You won!\n\r")
