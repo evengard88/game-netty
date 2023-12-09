@@ -75,32 +75,8 @@ public class RPSGameServerHandler extends SimpleChannelInboundHandler<String> {
                 player.getChanel().write("Opponent move: " + opponent.getMove() + "\n\r");
                 opponent.getChanel().write("Opponent move: " + player.getMove() + "\n\r");
                 switch (game(player.getMove(), opponent.getMove())) {
-                    case PLAYER1_WINS -> {
-                        player.getChanel().writeAndFlush("You won!\n\r");
-                        opponent.getChanel().writeAndFlush("You lost!\n\r");
-
-                        player.getChanel().attr(PLAYER_ATTRIBUTE_KEY).set(null);
-                        player.getChanel().attr(OPPONENT_ATTRIBUTE_KEY).set(null);
-
-                        opponent.getChanel().attr(PLAYER_ATTRIBUTE_KEY).set(null);
-                        opponent.getChanel().attr(OPPONENT_ATTRIBUTE_KEY).set(null);
-
-                        player.getChanel().close();
-                        opponent.getChanel().close();
-                    }
-                    case PLAYER1_lOSES -> {
-                        player.getChanel().writeAndFlush("You lost!\n\r");
-                        opponent.getChanel().writeAndFlush("You won!\n\r");
-
-                        player.getChanel().attr(PLAYER_ATTRIBUTE_KEY).set(null);
-                        player.getChanel().attr(OPPONENT_ATTRIBUTE_KEY).set(null);
-
-                        opponent.getChanel().attr(PLAYER_ATTRIBUTE_KEY).set(null);
-                        opponent.getChanel().attr(OPPONENT_ATTRIBUTE_KEY).set(null);
-
-                        player.getChanel().close();
-                        opponent.getChanel().close();
-                    }
+                    case PLAYER1_WINS -> finishGameContextFirstWins(player, opponent);
+                    case PLAYER1_lOSES -> finishGameContextFirstWins(opponent, player);
                     default -> {
                         player.setMove(null);
                         opponent.setMove(null);
@@ -147,20 +123,26 @@ public class RPSGameServerHandler extends SimpleChannelInboundHandler<String> {
     @Override
     public void channelInactive(ChannelHandlerContext ctx) throws Exception {
         log.info("inactive handler, id = " + ctx.channel().id());
-        finishOpponentContext(ctx);
+        finishOpponentContextWithVictory(ctx);
         super.channelInactive(ctx);
     }
 
-    @Override
-    public void exceptionCaught(ChannelHandlerContext ctx, Throwable cause) {
-        log.severe("Error on " + ctx.channel().id().asLongText() + " \n\r Error: " + cause.toString());
-        cause.printStackTrace();
-        finishOpponentContext(ctx);
-        ctx.close();
+    private void finishGameContextFirstWins(Player playerFirst, Player playerSecond) {
+        playerSecond.getChanel().writeAndFlush("You lost!\n\r");
+        playerFirst.getChanel().writeAndFlush("You won!\n\r");
+
+        playerSecond.getChanel().attr(PLAYER_ATTRIBUTE_KEY).set(null);
+        playerSecond.getChanel().attr(OPPONENT_ATTRIBUTE_KEY).set(null);
+
+        playerFirst.getChanel().attr(PLAYER_ATTRIBUTE_KEY).set(null);
+        playerFirst.getChanel().attr(OPPONENT_ATTRIBUTE_KEY).set(null);
+
+        playerSecond.getChanel().close();
+        playerFirst.getChanel().close();
     }
 
-    private void finishOpponentContext(ChannelHandlerContext ctx) {
-        Player opponent = ctx.attr(OPPONENT_ATTRIBUTE_KEY).get();
+    private void finishOpponentContextWithVictory(ChannelHandlerContext ctx) {
+        Player opponent = ctx.attr(OPPONENT_ATTRIBUTE_KEY).getAndSet(null);
         if (opponent != null) {
             opponent.getChanel().writeAndFlush("Your opponent left! You won!\n\r");
             opponent.getChanel().close();
