@@ -22,7 +22,6 @@ public class GameEvaluateHandler implements GameHandler {
                     restartGame(player2);
                 }
             }
-
         }
     }
 
@@ -51,7 +50,7 @@ public class GameEvaluateHandler implements GameHandler {
 
     private void restartGame(Player player) {
         player.removeMove();
-        player.sendMassage("It is a tie, try again\n\r");
+        player.sendMassage("It is a tie, try again");
     }
 
     private void finishGameFirstWins(Player player1, Player player2, GameContext context) {

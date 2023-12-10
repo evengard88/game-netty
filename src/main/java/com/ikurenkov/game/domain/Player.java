@@ -25,19 +25,21 @@ public class Player {
         return move;
     }
 
-    public void setMove(Move move) {
+    public Player setMove(Move move) {
         Objects.requireNonNull(move);
         assert (state == PlayerState.MOVE_AWAIT);
         this.move = move;
         this.state = PlayerState.MOVE_DONE;
+        return this;
     }
 
 
-    public void setName(String name) {
+    public Player setName(String name) {
         Objects.requireNonNull(name);
         assert (state == PlayerState.NAME_AWAIT);
         this.name = name;
         this.state = PlayerState.MOVE_AWAIT;
+        return this;
     }
 
     public void sendMassage(String message) {
