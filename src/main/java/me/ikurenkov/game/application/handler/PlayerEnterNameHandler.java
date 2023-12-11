@@ -20,6 +20,8 @@ public class PlayerEnterNameHandler implements GameHandler {
             context.getActor().setName(message);
             context.getActor().sendMassage("Welcome, " + context.getActor().getName() + "!");
             nextHandler.handle(context, message);
+        } else {
+            context.getActor().sendMassage("Enter your name, at least one symbol");
         }
     }
 
