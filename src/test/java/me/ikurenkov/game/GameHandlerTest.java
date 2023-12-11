@@ -5,6 +5,7 @@ import me.ikurenkov.game.application.GameContext;
 import me.ikurenkov.game.application.PlayerMessagePort;
 import me.ikurenkov.game.application.handler.GameEvaluateHandler;
 import me.ikurenkov.game.domain.Game;
+import me.ikurenkov.game.domain.Move;
 import me.ikurenkov.game.domain.Player;
 import org.assertj.core.api.Assertions;
 import org.junit.jupiter.api.Test;

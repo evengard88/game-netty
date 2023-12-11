@@ -1,6 +1,5 @@
 package me.ikurenkov.game.domain;
 
-import me.ikurenkov.game.Move;
 import me.ikurenkov.game.application.PlayerMessagePort;
 import lombok.ToString;
 

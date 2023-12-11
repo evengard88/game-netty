@@ -1,4 +1,4 @@
-package me.ikurenkov.game;
+package me.ikurenkov.game.domain;
 
 import java.util.Objects;
 

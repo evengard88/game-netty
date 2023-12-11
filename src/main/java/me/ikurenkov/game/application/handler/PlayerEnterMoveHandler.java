@@ -1,7 +1,7 @@
 package me.ikurenkov.game.application.handler;
 
 import com.google.inject.Inject;
-import me.ikurenkov.game.Move;
+import me.ikurenkov.game.domain.Move;
 import me.ikurenkov.game.application.GameContext;
 import me.ikurenkov.game.application.GameHandler;
 
