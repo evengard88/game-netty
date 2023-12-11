@@ -1,4 +1,4 @@
-package me.ikurenkov.game;
+package me.ikurenkov.game.application.impl;
 
 import com.google.inject.Inject;
 import me.ikurenkov.game.configuration.NettyModule;

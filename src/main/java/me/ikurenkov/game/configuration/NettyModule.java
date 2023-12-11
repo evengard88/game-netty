@@ -3,7 +3,7 @@ package me.ikurenkov.game.configuration;
 import com.google.inject.AbstractModule;
 import com.google.inject.Provides;
 import com.google.inject.Singleton;
-import me.ikurenkov.game.NettyServer;
+import me.ikurenkov.game.application.impl.NettyServer;
 import me.ikurenkov.game.adapter.in.RPSGameServerHandler;
 import io.netty.channel.ChannelInitializer;
 import io.netty.channel.ChannelPipeline;

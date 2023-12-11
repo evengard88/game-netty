@@ -2,6 +2,7 @@ package me.ikurenkov.game;
 
 import com.google.inject.Guice;
 import com.google.inject.Injector;
+import me.ikurenkov.game.application.impl.NettyServer;
 import me.ikurenkov.game.configuration.AppDataModule;
 import me.ikurenkov.game.configuration.GameRulesModule;
 import me.ikurenkov.game.configuration.NettyModule;
