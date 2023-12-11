@@ -4,7 +4,7 @@
 
     <groupId>com.ikurenkov</groupId>
     <artifactId>RPS-server</artifactId>
-    <version>0.3</version>
+    <version>0.5</version>
     <packaging>jar</packaging>
 
     <name>rock-paper-scissors-server</name>
@@ -45,6 +45,16 @@
             <groupId>io.netty</groupId>
             <artifactId>netty-all</artifactId>
             <version>${version.netty}</version> <!-- Use the latest version available -->
+        </dependency>
+        <dependency>
+            <groupId>io.lettuce</groupId>
+            <artifactId>lettuce-core</artifactId>
+            <version>6.3.0.RELEASE</version>
+        </dependency>
+        <dependency>
+            <groupId>com.google.code.gson</groupId>
+            <artifactId>gson</artifactId>
+            <version>2.10.1</version>
         </dependency>
         <dependency>
             <groupId>org.projectlombok</groupId>

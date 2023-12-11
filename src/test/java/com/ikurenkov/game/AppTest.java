@@ -80,7 +80,6 @@ public class AppTest extends BasicGuiceTest {
     @Test
     void playerDisconnectsTests() {
         // Create an EmbeddedChannel with the EchoHandler
-        RPSGameServerHandler rpsGameServerHandler = new RPSGameServerHandler(null);
         EmbeddedChannel channel = new EmbeddedChannel(DefaultChannelId.newInstance(), rpsGameServerHandler);
         EmbeddedChannel channel2 = new EmbeddedChannel(DefaultChannelId.newInstance(), rpsGameServerHandler);
 

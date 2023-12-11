@@ -1,52 +1,43 @@
 package com.ikurenkov.game.adapter.in;
 
 import com.google.inject.Inject;
-import com.ikurenkov.game.adapter.mapper.ChannelHandlerContextAdapter;
-import com.ikurenkov.game.adapter.mapper.ChannelHandlerMessageAdapter;
-import com.ikurenkov.game.application.GameContext;
-import com.ikurenkov.game.application.GameService;
-import com.ikurenkov.game.application.PlayerMessagePort;
+import com.ikurenkov.game.application.EventPort;
 import io.netty.channel.ChannelHandler;
 import io.netty.channel.ChannelHandlerContext;
 import io.netty.channel.SimpleChannelInboundHandler;
+import io.netty.channel.group.ChannelGroup;
 import lombok.extern.java.Log;
 
 @Log
 @ChannelHandler.Sharable
 public class RPSGameServerHandler extends SimpleChannelInboundHandler<String> {
-    private final GameService gameService;
+    private final ChannelGroup channelGroup;
+    private final EventPort eventPort;
 
     @Inject
-    public RPSGameServerHandler(GameService gameService) {
-        this.gameService = gameService;
+    public RPSGameServerHandler(EventPort eventPort, ChannelGroup channelGroup) {
+        this.eventPort = eventPort;
+        this.channelGroup = channelGroup;
     }
 
     @Override
     public void channelRegistered(ChannelHandlerContext ctx) throws Exception {
         super.channelRegistered(ctx);
-        gameService.start(mapToGameContext(ctx), mapToActorPort(ctx));
+        channelGroup.add(ctx.channel());
+        eventPort.start(ctx.channel().id().asLongText());
     }
 
     @Override
-    protected void channelRead0(ChannelHandlerContext ctx, String message) throws InterruptedException {
+    protected void channelRead0(ChannelHandlerContext ctx, String message) {
         log.info("Handler, id = " + ctx.channel().id());
-        gameService.handleMessage(mapToGameContext(ctx), message);
+        eventPort.sendMessage(ctx.channel().id().asLongText(), message);
     }
 
     @Override
     public void channelUnregistered(ChannelHandlerContext ctx) throws Exception {
         log.info("Unregistered handler, id = " + ctx.channel().id());
-        gameService.disconnect(mapToGameContext(ctx));
+        eventPort.disconnect(ctx.channel().id().asLongText());
         super.channelUnregistered(ctx);
     }
-
-    private static GameContext mapToGameContext(ChannelHandlerContext ctx) {
-        return new ChannelHandlerContextAdapter(ctx);
-    }
-
-    private static PlayerMessagePort mapToActorPort(ChannelHandlerContext ctx) {
-        return new ChannelHandlerMessageAdapter(ctx);
-    }
-
 
 }

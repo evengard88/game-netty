@@ -1,9 +1,7 @@
 package com.ikurenkov.game;
 
 import com.google.inject.Guice;
-import com.ikurenkov.game.configuration.AppDataModule;
-import com.ikurenkov.game.configuration.GameConfigurationModule;
-import com.ikurenkov.game.configuration.GameRulesModule;
+import com.ikurenkov.game.configuration.AppModule;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.TestInstance;
 
@@ -12,10 +10,8 @@ public abstract class BasicGuiceTest {
     @BeforeAll
     public void setUp() {
         Guice.createInjector(
-                        new GameConfigurationModule(),
-                        new AppDataModule(),
-                        new GameRulesModule(),
-                        new GameConfigurationModule())
+                        new AppModule()
+                )
                 .injectMembers(this);
     }
 }

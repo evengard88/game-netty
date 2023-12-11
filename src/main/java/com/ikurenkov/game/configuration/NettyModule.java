@@ -8,14 +8,16 @@ import com.ikurenkov.game.adapter.in.RPSGameServerHandler;
 import io.netty.channel.ChannelInitializer;
 import io.netty.channel.ChannelPipeline;
 import io.netty.channel.EventLoopGroup;
+import io.netty.channel.group.ChannelGroup;
+import io.netty.channel.group.DefaultChannelGroup;
 import io.netty.channel.nio.NioEventLoopGroup;
 import io.netty.channel.socket.nio.NioSocketChannel;
 import io.netty.handler.codec.DelimiterBasedFrameDecoder;
 import io.netty.handler.codec.Delimiters;
 import io.netty.handler.codec.string.StringDecoder;
 import io.netty.handler.codec.string.StringEncoder;
+import io.netty.util.concurrent.GlobalEventExecutor;
 import jakarta.inject.Qualifier;
-
 import java.lang.annotation.Retention;
 
 import static java.lang.annotation.RetentionPolicy.RUNTIME;
@@ -62,6 +64,12 @@ public class NettyModule extends AbstractModule {
                 pipeline.addLast(gameHandler);
             }
         };
+    }
+
+    @Provides
+    @Singleton
+    public ChannelGroup channelGroup() {
+        return new DefaultChannelGroup(GlobalEventExecutor.INSTANCE);
     }
 
     @Provides
