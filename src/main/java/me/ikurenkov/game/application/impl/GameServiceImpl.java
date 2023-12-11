@@ -40,8 +40,8 @@ public class GameServiceImpl implements GameService {
         if (availableHandlers.size() != 1) {
             log.severe("Incorrect number of handlers" + availableHandlers);
         }
-        if (availableHandlers.size() > 0) {
-            availableHandlers.get(0).handle(context, message);
+        if (!availableHandlers.isEmpty()) {
+            availableHandlers.getFirst().handle(context, message);
         }
 
     }

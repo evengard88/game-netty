@@ -44,7 +44,6 @@ public class NettyServer {
             f.channel().closeFuture().sync();
         } catch (InterruptedException e) {
             log.severe(e.toString());
-            e.printStackTrace();
         } finally {
             log.info("Server shutdown gracefully");
             workerGroup.shutdownGracefully();

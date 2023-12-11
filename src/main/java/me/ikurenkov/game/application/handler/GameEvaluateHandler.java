@@ -10,8 +10,8 @@ public class GameEvaluateHandler implements GameHandler {
     @Override
     public void handle(GameContext context, String message) {
         if (supports(context)) {
-            Player player1 = context.getGame().getPlayer1();
-            Player player2 = context.getGame().getPlayer2();
+            Player player1 = context.getGame().player1();
+            Player player2 = context.getGame().player2();
             player1.sendMassage("Opponent move: " + player2.getMove());
             player2.sendMassage("Opponent move: " + player1.getMove());
             switch (game(player1.getMove(), player2.getMove())) {
@@ -27,8 +27,8 @@ public class GameEvaluateHandler implements GameHandler {
 
     @Override
     public boolean supports(GameContext context) {
-        return context.getGame().getPlayer1().requiresResult()
-                && context.getGame().getPlayer2().requiresResult();
+        return context.getGame().player1().requiresResult()
+                && context.getGame().player2().requiresResult();
     }
 
     private GameResult game(Move move, Move moveOpponent) {

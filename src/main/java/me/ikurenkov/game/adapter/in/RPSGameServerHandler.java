@@ -28,7 +28,7 @@ public class RPSGameServerHandler extends SimpleChannelInboundHandler<String> {
     }
 
     @Override
-    protected void channelRead0(ChannelHandlerContext ctx, String message) throws InterruptedException {
+    protected void channelRead0(ChannelHandlerContext ctx, String message) {
         log.info("Handler, id = " + ctx.channel().id());
         gameService.handleMessage(mapToGameContext(ctx), message);
     }

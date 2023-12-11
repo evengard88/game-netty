@@ -1,5 +1,6 @@
 package me.ikurenkov.game.domain;
 
+import lombok.Getter;
 import me.ikurenkov.game.application.PlayerMessagePort;
 import lombok.ToString;
 
@@ -9,19 +10,13 @@ import java.util.Objects;
 public class Player {
     private final PlayerMessagePort port;
     private volatile PlayerState state = PlayerState.NAME_AWAIT;
+    @Getter
     private volatile String name;
+    @Getter
     private volatile Move move;
 
     public Player(PlayerMessagePort port) {
         this.port = port;
-    }
-
-    public String getName() {
-        return name;
-    }
-
-    public Move getMove() {
-        return move;
     }
 
     public Player setMove(Move move) {
