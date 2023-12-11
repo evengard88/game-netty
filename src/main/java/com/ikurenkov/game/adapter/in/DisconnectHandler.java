@@ -17,7 +17,7 @@ public class DisconnectHandler extends AbstractListener {
 
     @Override
     protected void executeOnChannel(Channel channel, String message) {
-        channel.writeAndFlush(message).addListener(ChannelFutureListener.CLOSE);
+        channel.writeAndFlush(message+ "\n\r").addListener(ChannelFutureListener.CLOSE);
     }
 
 }

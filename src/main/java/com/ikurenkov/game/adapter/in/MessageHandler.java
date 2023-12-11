@@ -16,6 +16,6 @@ public class MessageHandler extends AbstractListener {
 
     @Override
     protected void executeOnChannel(Channel channel, String message) {
-        channel.writeAndFlush(message);
+        channel.writeAndFlush(message + "\n\r");
     }
 }
