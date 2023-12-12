@@ -9,11 +9,11 @@ import me.ikurenkov.game.logic.domain.Game;
 import me.ikurenkov.game.logic.domain.PlayerId;
 
 public class PlayerEnterNameHandler implements GameHandler {
-    private final GameHandler nextHandler;
+    private final GameStartHandler nextHandler;
     private final GameUpdatePort gameUpdatePort;
 
     @Inject
-    public PlayerEnterNameHandler(WaitForOpponentHandler nextHandler, GameUpdatePort gameUpdatePort, MessagePort messagePort) {
+    public PlayerEnterNameHandler(GameStartHandler nextHandler, GameUpdatePort gameUpdatePort, MessagePort messagePort) {
         this.nextHandler = nextHandler;
         this.gameUpdatePort = gameUpdatePort;
         this.messagePort = messagePort;

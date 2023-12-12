@@ -2,6 +2,9 @@ package me.ikurenkov.game.logic.application.impl.handler;
 
 import jakarta.inject.Inject;
 import me.ikurenkov.game.logic.application.GameHandler;
+import me.ikurenkov.game.logic.application.impl.GameDeletePort;
+import me.ikurenkov.game.logic.application.port.out.DisconnectPort;
+import me.ikurenkov.game.logic.application.port.out.GameUpdatePort;
 import me.ikurenkov.game.logic.application.port.out.MessagePort;
 import me.ikurenkov.game.logic.domain.Game;
 import me.ikurenkov.game.logic.domain.Move;
@@ -10,8 +13,21 @@ import me.ikurenkov.game.logic.domain.PlayerId;
 
 public class GameEvaluateHandler implements GameHandler {
 
+    private final MessagePort messagePort;
+    private final DisconnectPort disconnectPort;
+    private final GameUpdatePort gameUpdatePort;
+    private final GameDeletePort gameDeletePort;
+
     @Inject
-    MessagePort messagePort;
+    public GameEvaluateHandler(MessagePort messagePort,
+                               DisconnectPort disconnectPort,
+                               GameUpdatePort gameUpdatePort,
+                               GameDeletePort gameDeletePort) {
+        this.messagePort = messagePort;
+        this.disconnectPort = disconnectPort;
+        this.gameUpdatePort = gameUpdatePort;
+        this.gameDeletePort = gameDeletePort;
+    }
 
     @Override
     public void handle(Game game, PlayerId id, String message) {
@@ -28,6 +44,7 @@ public class GameEvaluateHandler implements GameHandler {
                     restartGame(player2);
                 }
             }
+            gameUpdatePort.gameUpdate(game);
         }
     }
 
@@ -62,7 +79,8 @@ public class GameEvaluateHandler implements GameHandler {
     }
 
     private void finishGameFirstWins(Player player1, Player player2, Game game) {
-        throw new UnsupportedOperationException("wow");
+        disconnectPort.disconnect(player1.getPlayerId(), "You won!");
+        disconnectPort.disconnect(player2.getPlayerId(), "You lost!");
     }
 
     private enum GameResult {

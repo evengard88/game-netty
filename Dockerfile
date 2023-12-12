@@ -12,4 +12,4 @@ RUN mvn -f /home/app/pom.xml clean compile assembly:single
 FROM eclipse-temurin:21-jre-alpine
 COPY --from=build /home/app/target/RPS-server-0.5-jar-with-dependencies.jar /usr/local/lib/app.jar
 EXPOSE 8080
-ENTRYPOINT ["java","-jar","/usr/local/lib/app.jar", "8080", "localhost", "6379"]
+ENTRYPOINT ["java","-jar","/usr/local/lib/app.jar", "8080", "redis", "6379"]

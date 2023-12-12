@@ -4,6 +4,6 @@ import me.ikurenkov.game.logic.domain.Player;
 import me.ikurenkov.game.logic.domain.PlayerId;
 
 public interface LobbyPlayerStorePort {
-    void store(Player p);
+    void store(PlayerId p);
     void remove(PlayerId playerId);
 }

@@ -30,6 +30,11 @@ public class RedisQueuePort implements MessagePort, DisconnectPort {
     }
 
     @Override
+    public void disconnect(PlayerId id, String message) {
+        disconnect(id.getServerId(), id.getChannelId(), message);
+    }
+
+    @Override
     public void sendMessage(String serverId, String channelId, String message) {
         MessageCommand player = new MessageCommand(channelId, message);
         connection.sync().publish(STR."\{serverId}:message", mapper.toJson(player));

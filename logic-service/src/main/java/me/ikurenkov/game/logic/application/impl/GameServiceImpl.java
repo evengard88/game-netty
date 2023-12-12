@@ -7,7 +7,10 @@ import me.ikurenkov.game.logic.application.port.in.LobbyPlayerStorePort;
 import me.ikurenkov.game.logic.application.port.in.MessageReceivedUseCase;
 import me.ikurenkov.game.logic.application.port.in.PlayerDisconnectsUseCase;
 import me.ikurenkov.game.logic.application.port.in.PlayerInitializedUseCase;
-import me.ikurenkov.game.logic.application.port.out.*;
+import me.ikurenkov.game.logic.application.port.out.DisconnectPort;
+import me.ikurenkov.game.logic.application.port.out.GameCreatePort;
+import me.ikurenkov.game.logic.application.port.out.GameGetPort;
+import me.ikurenkov.game.logic.application.port.out.MessagePort;
 import me.ikurenkov.game.logic.domain.Game;
 import me.ikurenkov.game.logic.domain.Player;
 import me.ikurenkov.game.logic.domain.PlayerId;
@@ -25,7 +28,7 @@ public class GameServiceImpl implements MessageReceivedUseCase, PlayerInitialize
     private final LobbyPlayerStorePort storePlayerPort;
     private final GameGetPort gameGetPort;
     private final GameCreatePort gameCreatePort;
-    private final GameUpdatePort gameUpdatePort;
+    private final GameDeletePort gameDeletePort;
 
     @Inject
     public GameServiceImpl(Set<GameHandler> gameHandlers,
@@ -34,14 +37,14 @@ public class GameServiceImpl implements MessageReceivedUseCase, PlayerInitialize
                            LobbyPlayerStorePort storePlayerPort,
                            GameGetPort gameGetPort,
                            GameCreatePort gameCreatePort,
-                           GameUpdatePort gameUpdatePort) {
+                           GameDeletePort gameDeletePort1) {
         this.gameHandlers = gameHandlers;
         this.messagePort = messagePort;
         this.disconnectPort = disconnectPort;
         this.storePlayerPort = storePlayerPort;
         this.gameGetPort = gameGetPort;
         this.gameCreatePort = gameCreatePort;
-        this.gameUpdatePort = gameUpdatePort;
+        this.gameDeletePort = gameDeletePort1;
     }
 
     @Override
@@ -71,8 +74,16 @@ public class GameServiceImpl implements MessageReceivedUseCase, PlayerInitialize
 
     @Override
     public void playerDisconnect(String serverId, String channelId) {
-//        PlayerId playerId = new PlayerId(serverId, channelId);
-//        storePlayerPort.remove(playerId);
-//        gameGetPort.get(playerId);
+        PlayerId playerId = new PlayerId(serverId, channelId);
+
+        Game game = gameGetPort.get(playerId);
+        if (game == null) return; //already cleaned
+        Player opponent = game.getOpponent(playerId);
+        if (opponent != null) {
+            disconnectPort.disconnect(opponent.getPlayerId(), "Your opponent left! You won!");
+        }
+        storePlayerPort.remove(playerId);
+
+        gameDeletePort.gameDeleteAll(game.getGameId(), game.getPlayer2().getPlayerId(), game.getPlayer1().getPlayerId());
     }
 }
