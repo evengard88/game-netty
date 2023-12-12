@@ -10,6 +10,8 @@ import io.netty.util.AttributeKey;
 import lombok.extern.java.Log;
 
 import java.util.concurrent.BlockingQueue;
+import java.util.concurrent.locks.Lock;
+import java.util.concurrent.locks.ReentrantLock;
 
 @Log
 @ChannelHandler.Sharable
@@ -17,6 +19,7 @@ public class RPSGameServerHandler extends SimpleChannelInboundHandler<String> {
     private static final AttributeKey<Player> PLAYER_ATTRIBUTE_KEY = AttributeKey.valueOf("player");
     private static final AttributeKey<Player> OPPONENT_ATTRIBUTE_KEY = AttributeKey.valueOf("opponent");
     private final BlockingQueue<Player> lobby;
+    private final static Lock lock = new ReentrantLock();
 
     @Inject
     RPSGameServerHandler(BlockingQueue<Player> lobby) {
@@ -45,20 +48,25 @@ public class RPSGameServerHandler extends SimpleChannelInboundHandler<String> {
             ctx.writeAndFlush("Searching for opponent...\n\r");
             Player secondPlayer = lobby.poll();
             if (secondPlayer == null) {
-                lobby.add(player);
+                try {
+                    lock.lock();
+                    secondPlayer = lobby.poll();
+                    if (secondPlayer == null) {
+                        lobby.add(player);
+                    }
+                } finally {
+                    lock.unlock();
+                }
+
+                lobby.offer(player);
                 player.getChanel().writeAndFlush("No opponent available! Wait for opponent.\n\r");
-            } else {
-                player.getChanel().attr(OPPONENT_ATTRIBUTE_KEY).set(secondPlayer);
-                secondPlayer.getChanel().attr(OPPONENT_ATTRIBUTE_KEY).set(player);
-
-                player.getChanel().writeAndFlush("Your opponent is " + secondPlayer.getName() + "!\n\r");
-                secondPlayer.getChanel().writeAndFlush("Your opponent is " + player.getName() + "!\n\r");
-
-                player.getChanel().writeAndFlush("Enter your move: rock(1), paper(2) or scissors(3)\n\r");
-                secondPlayer.getChanel().writeAndFlush("Enter your move: rock(1), paper(2) or scissors(3)\n\r");
+            }
+            if (secondPlayer == null) {
+                processGame(player, secondPlayer);
             }
             return;
         }
+
         Player opponent = ctx.channel().attr(OPPONENT_ATTRIBUTE_KEY).get();
         if (player.getMove() == null && opponent == null) {
             ctx.writeAndFlush("No opponent available! Wait for opponent.\n\r");
@@ -86,6 +94,17 @@ public class RPSGameServerHandler extends SimpleChannelInboundHandler<String> {
                 }
             }
         }
+    }
+
+    private void processGame(Player player, Player secondPlayer) {
+        player.getChanel().attr(OPPONENT_ATTRIBUTE_KEY).set(secondPlayer);
+        secondPlayer.getChanel().attr(OPPONENT_ATTRIBUTE_KEY).set(player);
+
+        player.getChanel().writeAndFlush("Your opponent is " + secondPlayer.getName() + "!\n\r");
+        secondPlayer.getChanel().writeAndFlush("Your opponent is " + player.getName() + "!\n\r");
+
+        player.getChanel().writeAndFlush("Enter your move: rock(1), paper(2) or scissors(3)\n\r");
+        secondPlayer.getChanel().writeAndFlush("Enter your move: rock(1), paper(2) or scissors(3)\n\r");
     }
 
     private GameResult game(Move move, Move moveOpponent) {
