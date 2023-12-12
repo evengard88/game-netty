@@ -62,7 +62,7 @@ public class RPSGameServerHandler extends SimpleChannelInboundHandler<String> {
                 player.getChanel().writeAndFlush("No opponent available! Wait for opponent.\n\r");
             }
             if (secondPlayer != null) {
-                processGame(player, secondPlayer);
+                setOpponents(player, secondPlayer);
             }
             return;
         }
@@ -96,7 +96,7 @@ public class RPSGameServerHandler extends SimpleChannelInboundHandler<String> {
         }
     }
 
-    private void processGame(Player player, Player secondPlayer) {
+    private void setOpponents(Player player, Player secondPlayer) {
         player.getChanel().attr(OPPONENT_ATTRIBUTE_KEY).set(secondPlayer);
         secondPlayer.getChanel().attr(OPPONENT_ATTRIBUTE_KEY).set(player);
 
