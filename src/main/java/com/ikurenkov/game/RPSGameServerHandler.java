@@ -61,7 +61,7 @@ public class RPSGameServerHandler extends SimpleChannelInboundHandler<String> {
                 lobby.offer(player);
                 player.getChanel().writeAndFlush("No opponent available! Wait for opponent.\n\r");
             }
-            if (secondPlayer == null) {
+            if (secondPlayer != null) {
                 processGame(player, secondPlayer);
             }
             return;
