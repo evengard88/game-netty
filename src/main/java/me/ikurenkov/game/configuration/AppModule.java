@@ -12,7 +12,16 @@ import java.util.UUID;
 import static java.lang.annotation.RetentionPolicy.RUNTIME;
 
 public class AppModule extends AbstractModule {
-    private final String serverId = UUID.randomUUID().toString();
+
+    private final String serverId;
+
+    public AppModule() {
+        this(UUID.randomUUID().toString());
+    }
+
+    public AppModule(String serverId) {
+        this.serverId = serverId;
+    }
 
     @Provides
     @ServerId

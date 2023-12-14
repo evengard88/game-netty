@@ -10,7 +10,7 @@ import java.util.function.Consumer;
 
 @Log
 @LettuceModule.MessageListener
-public class MessageHandler extends AbstractListener<MessageReceivedUseCase.InputMessage> {
+public class MessageHandler extends AbstractHandler<MessageReceivedUseCase.InputMessage> {
     private final MessageReceivedUseCase messageReceivedUseCase;
 
     @Inject

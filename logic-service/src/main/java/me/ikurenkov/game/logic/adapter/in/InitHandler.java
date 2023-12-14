@@ -10,7 +10,7 @@ import java.util.function.Consumer;
 
 @Log
 @LettuceModule.InitListener
-public class InitHandler extends AbstractListener<PlayerInitializedUseCase.Initialization> {
+public class InitHandler extends AbstractHandler<PlayerInitializedUseCase.Initialization> {
     private final PlayerInitializedUseCase initializedUseCase;
 
     @Inject

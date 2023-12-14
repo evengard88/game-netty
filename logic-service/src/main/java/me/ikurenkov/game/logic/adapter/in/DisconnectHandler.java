@@ -10,7 +10,7 @@ import java.util.function.Consumer;
 
 @Log
 @LettuceModule.DisconnectListener
-public class DisconnectHandler extends AbstractListener<PlayerDisconnectsUseCase.Disconnection> {
+public class DisconnectHandler extends AbstractHandler<PlayerDisconnectsUseCase.Disconnection> {
     private final PlayerDisconnectsUseCase disconnectsUseCase;
 
     @Inject

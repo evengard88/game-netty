@@ -3,21 +3,19 @@ package me.ikurenkov.game.configuration;
 import com.google.inject.AbstractModule;
 import com.google.inject.Provides;
 import com.google.inject.Singleton;
-import me.ikurenkov.game.NettyServer;
-import me.ikurenkov.game.adapter.in.RPSGameServerHandler;
 import io.netty.channel.ChannelInitializer;
 import io.netty.channel.ChannelPipeline;
 import io.netty.channel.EventLoopGroup;
-import io.netty.channel.group.ChannelGroup;
-import io.netty.channel.group.DefaultChannelGroup;
 import io.netty.channel.nio.NioEventLoopGroup;
 import io.netty.channel.socket.nio.NioSocketChannel;
 import io.netty.handler.codec.DelimiterBasedFrameDecoder;
 import io.netty.handler.codec.Delimiters;
 import io.netty.handler.codec.string.StringDecoder;
 import io.netty.handler.codec.string.StringEncoder;
-import io.netty.util.concurrent.GlobalEventExecutor;
+import io.netty.handler.timeout.IdleStateHandler;
 import jakarta.inject.Qualifier;
+import me.ikurenkov.game.NettyServer;
+import me.ikurenkov.game.adapter.in.RPSGameServerHandler;
 
 import java.lang.annotation.Retention;
 
@@ -62,16 +60,11 @@ public class NettyModule extends AbstractModule {
                 pipeline.addLast(new DelimiterBasedFrameDecoder(8192, Delimiters.lineDelimiter()));
                 pipeline.addLast(encoder);
                 pipeline.addLast(decoder);
+                pipeline.addLast(new IdleStateHandler(0, 0, 40));
                 pipeline.addLast(gameHandler);
             }
         };
     }
-
-//    @Provides
-//    @Singleton
-//    public ChannelGroup channelGroup() {
-//        return new DefaultChannelGroup(GlobalEventExecutor.INSTANCE);
-//    }
 
     @Provides
     @Port

@@ -8,13 +8,11 @@ import me.ikurenkov.game.logic.application.impl.RedisLobbyPort;
 import me.ikurenkov.game.logic.application.port.in.LobbyPlayerStorePort;
 import me.ikurenkov.game.logic.application.port.in.MessageReceivedUseCase;
 import me.ikurenkov.game.logic.application.port.in.PlayerDisconnectsUseCase;
-import me.ikurenkov.game.logic.application.port.in.PlayerInitializedUseCase;
 import me.ikurenkov.game.logic.application.port.out.*;
 
 public class ApplicationModule extends AbstractModule {
     @Override
     protected void configure() {
-        bind(PlayerInitializedUseCase.class).to(GameServiceImpl.class);
         bind(MessageReceivedUseCase.class).to(GameServiceImpl.class);
         bind(PlayerDisconnectsUseCase.class).to(GameServiceImpl.class);
         bind(GameCreatePort.class).to(GameRepoImpl.class);

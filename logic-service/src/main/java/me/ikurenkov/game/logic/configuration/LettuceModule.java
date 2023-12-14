@@ -10,9 +10,8 @@ import io.lettuce.core.api.StatefulRedisConnection;
 import io.lettuce.core.codec.StringCodec;
 import io.lettuce.core.pubsub.StatefulRedisPubSubConnection;
 import jakarta.inject.Qualifier;
-import me.ikurenkov.game.logic.adapter.in.AbstractListener;
+import me.ikurenkov.game.logic.adapter.in.AbstractHandler;
 import me.ikurenkov.game.logic.adapter.in.DisconnectHandler;
-import me.ikurenkov.game.logic.adapter.in.InitHandler;
 import me.ikurenkov.game.logic.adapter.in.MessageHandler;
 import me.ikurenkov.game.logic.adapter.out.RedisQueuePort;
 import me.ikurenkov.game.logic.application.port.out.DisconnectPort;
@@ -44,32 +43,23 @@ public class LettuceModule extends AbstractModule {
         bind(MessagePort.class).to(RedisQueuePort.class).asEagerSingleton();
         bind(DisconnectPort.class).to(RedisQueuePort.class).asEagerSingleton();
 
-        bind(AbstractListener.class)
-                .annotatedWith(InitListener.class)
-                .to(InitHandler.class)
-                .in(Singleton.class);
-
-        bind(AbstractListener.class)
+        bind(AbstractHandler.class)
                 .annotatedWith(MessageListener.class)
                 .to(MessageHandler.class)
                 .in(Singleton.class);
 
-        bind(AbstractListener.class)
+        bind(AbstractHandler.class)
                 .annotatedWith(DisconnectListener.class)
                 .to(DisconnectHandler.class)
                 .in(Singleton.class);
 
         bind(StatefulRedisPubSubConnection.class)
-                .annotatedWith(InitListener.class)
-                .toProvider(RedisPubSubInitProvider.class)
-                .asEagerSingleton();
-        bind(StatefulRedisPubSubConnection.class)
                 .annotatedWith(MessageListener.class)
-                .toProvider(RedisPubSubMessageProvider.class)
+                .toProvider(RedisListerMessageProvider.class)
                 .asEagerSingleton();
         bind(StatefulRedisPubSubConnection.class)
                 .annotatedWith(DisconnectListener.class)
-                .toProvider(RedisPubSubDisconnectProvider.class)
+                .toProvider(RedisListerDisconnectProvider.class)
                 .asEagerSingleton();
 
     }
@@ -101,36 +91,29 @@ public class LettuceModule extends AbstractModule {
         }
     }
 
-    private static class RedisPubSubInitProvider extends RedisPubSubAbstractProvider {
+    private static class RedisListerMessageProvider extends RedisListerAbstractProvider {
         @Inject
-        public RedisPubSubInitProvider(RedisClient client, @InitListener AbstractListener handler, RedisURI uri) {
-            super(client, handler, uri, "inits");
-        }
-    }
-
-    private static class RedisPubSubMessageProvider extends RedisPubSubAbstractProvider {
-        @Inject
-        public RedisPubSubMessageProvider(RedisClient client, @MessageListener AbstractListener handler, RedisURI uri) {
+        public RedisListerMessageProvider(RedisClient client, @MessageListener AbstractHandler handler, RedisURI uri) {
             super(client, handler, uri, "messages");
         }
     }
 
-    private static class RedisPubSubDisconnectProvider extends RedisPubSubAbstractProvider {
+    private static class RedisListerDisconnectProvider extends RedisListerAbstractProvider {
         @Inject
-        public RedisPubSubDisconnectProvider(RedisClient client, @DisconnectListener AbstractListener handler, RedisURI uri) {
+        public RedisListerDisconnectProvider(RedisClient client, @DisconnectListener AbstractHandler handler, RedisURI uri) {
             super(client, handler, uri, "disconnections");
         }
     }
 
-    private static class RedisPubSubAbstractProvider implements Provider<StatefulRedisPubSubConnection<String, String>> {
+    private static class RedisListerAbstractProvider implements Provider<StatefulRedisPubSubConnection<String, String>> {
 
         private final RedisClient redisClient;
-        private final AbstractListener handler;
+        private final AbstractHandler handler;
         private final RedisURI redisURI;
         private final String queue;
 
-        private RedisPubSubAbstractProvider(RedisClient redisClient,
-                                            AbstractListener handler,
+        private RedisListerAbstractProvider(RedisClient redisClient,
+                                            AbstractHandler handler,
                                             RedisURI redisURI,
                                             String queue) {
             this.redisClient = redisClient;
@@ -142,7 +125,7 @@ public class LettuceModule extends AbstractModule {
 
         @Override
         public StatefulRedisPubSubConnection<String, String> get() {
-            StatefulRedisPubSubConnection<String, String> connection = redisClient.connectPubSub(StringCodec.UTF8, redisURI);
+            StatefulRedisPubSubConnection<String, String> connection = redisClient.connect(StringCodec.UTF8, redisURI);
             connection.addListener(handler);
             connection.sync().subscribe(queue);
             return connection;
@@ -153,11 +136,6 @@ public class LettuceModule extends AbstractModule {
     @Qualifier
     @Retention(RUNTIME)
     public @interface DefaultConnection {
-    }
-
-    @Qualifier
-    @Retention(RUNTIME)
-    public @interface InitListener {
     }
 
     @Qualifier
