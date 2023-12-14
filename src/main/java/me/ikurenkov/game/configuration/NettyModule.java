@@ -3,8 +3,6 @@ package me.ikurenkov.game.configuration;
 import com.google.inject.AbstractModule;
 import com.google.inject.Provides;
 import com.google.inject.Singleton;
-import me.ikurenkov.game.application.impl.NettyServer;
-import me.ikurenkov.game.adapter.in.RPSGameServerHandler;
 import io.netty.channel.ChannelInitializer;
 import io.netty.channel.ChannelPipeline;
 import io.netty.channel.EventLoopGroup;
@@ -15,6 +13,8 @@ import io.netty.handler.codec.Delimiters;
 import io.netty.handler.codec.string.StringDecoder;
 import io.netty.handler.codec.string.StringEncoder;
 import jakarta.inject.Qualifier;
+import me.ikurenkov.game.adapter.in.RPSGameServerHandler;
+import me.ikurenkov.game.application.impl.NettyServer;
 
 import java.lang.annotation.Retention;
 
@@ -37,7 +37,7 @@ public class NettyModule extends AbstractModule {
     @BossGroupLoop
     @Singleton
     public EventLoopGroup providesBossEventLoopGroup() {
-        return new NioEventLoopGroup(1);
+        return new NioEventLoopGroup();
     }
 
     @Provides
