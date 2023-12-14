@@ -37,7 +37,7 @@ public class NettyModule extends AbstractModule {
     @BossGroupLoop
     @Singleton
     public EventLoopGroup providesBossEventLoopGroup() {
-        return new NioEventLoopGroup(1);
+        return new NioEventLoopGroup();
     }
 
     @Provides
