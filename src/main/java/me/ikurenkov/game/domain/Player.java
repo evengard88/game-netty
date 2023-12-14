@@ -5,15 +5,19 @@ import me.ikurenkov.game.application.PlayerMessagePort;
 import lombok.ToString;
 
 import java.util.Objects;
+import java.util.UUID;
 
 @ToString
 public class Player {
+    @Getter
+    private final String id = UUID.randomUUID().toString();
     private final PlayerMessagePort port;
     private volatile PlayerState state = PlayerState.NAME_AWAIT;
     @Getter
     private volatile String name;
     @Getter
     private volatile Move move;
+
 
     public Player(PlayerMessagePort port) {
         this.port = port;
