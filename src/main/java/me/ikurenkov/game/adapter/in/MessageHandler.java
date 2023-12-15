@@ -5,7 +5,6 @@ import com.google.inject.Inject;
 import io.netty.channel.Channel;
 import lombok.extern.java.Log;
 import me.ikurenkov.game.application.ChannelMap;
-import me.ikurenkov.game.configuration.LettuceModule;
 
 @Log
 public class MessageHandler extends AbstractListener {

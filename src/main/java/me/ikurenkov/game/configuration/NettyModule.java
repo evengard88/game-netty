@@ -53,14 +53,14 @@ public class NettyModule extends AbstractModule {
     public ChannelInitializer<NioSocketChannel> channelInitializer(StringEncoder encoder,
                                                                    StringDecoder decoder,
                                                                    RPSGameServerHandler gameHandler) {
-        return new ChannelInitializer<NioSocketChannel>() {
+        return new ChannelInitializer<>() {
             @Override
             protected void initChannel(NioSocketChannel ch) {
                 ChannelPipeline pipeline = ch.pipeline();
                 pipeline.addLast(new DelimiterBasedFrameDecoder(8192, Delimiters.lineDelimiter()));
                 pipeline.addLast(encoder);
                 pipeline.addLast(decoder);
-                pipeline.addLast(new IdleStateHandler(0, 0, 40));
+                pipeline.addLast(new IdleStateHandler(0, 0,120 ));
                 pipeline.addLast(gameHandler);
             }
         };

@@ -8,7 +8,6 @@ import me.ikurenkov.game.application.EventPort;
 import me.ikurenkov.game.configuration.AppModule;
 import me.ikurenkov.game.configuration.LettuceModule;
 import me.ikurenkov.game.domain.DisconnectEvent;
-import me.ikurenkov.game.domain.InitEvent;
 import me.ikurenkov.game.domain.MessageEvent;
 
 public class RedisEventPort implements EventPort {
