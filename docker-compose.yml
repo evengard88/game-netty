@@ -1,23 +1,59 @@
-version: '3'
 services:
   redis:
-    image: "redis:latest"
-    ports:
-      - "6379:6379"
+    image: "redis:7.4.1-alpine"
+    volumes:
+      - redis-data:/data
+    restart: always
+    networks:
+      - backend
+    deploy:
+      resources:
+        limits:
+          cpus: "1"      # Limit Redis to 50% of one CPU core
+          memory: "156M"    # Limit Redis to 256MB of memory
+        reservations:
+          cpus: "1"     # Reserve 25% of a CPU core for Redis
+          memory: "128M"   # Reserve 128MB of memory for Redis
 
   logic-service:
     build: ./logic-service
     depends_on:
       - redis
+    networks:
+      - backend
+    restart: always
     deploy:
       replicas: 3
+      resources:
+        limits:
+          cpus: "1"      # Limit to 1 full CPU core
+          memory: "512M"    # Limit to 512MB of memory
+        reservations:
+          cpus: "0.5"      # Reserve 50% of a CPU core
+          memory: "512M"   # Reserve 256MB of memory
 
   handler-service:
     build: ./
-    ports:
-      - "4000-4005:8080"
-    deploy:
-      replicas: 3
     depends_on:
       - redis
       - logic-service
+    ports:
+      - "4000-4001:8080"
+    networks:
+      - backend
+    restart: always
+    deploy:
+      replicas: 2
+      resources:
+        limits:
+          cpus: "1"      # Limit to 1 full CPU core
+          memory: "96M"    # Limit to 512MB of memory
+        reservations:
+          cpus: "1"      # Reserve 50% of a CPU core
+          memory: "96M"   # Reserve 256MB of memory
+
+volumes:
+  redis-data:
+
+networks:
+  backend:
