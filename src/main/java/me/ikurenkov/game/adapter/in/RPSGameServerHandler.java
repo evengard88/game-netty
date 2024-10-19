@@ -46,6 +46,7 @@ public class RPSGameServerHandler extends SimpleChannelInboundHandler<String> {
 
     @Override
     public void userEventTriggered(ChannelHandlerContext ctx, Object evt) throws Exception {
+        log.info(evt.getClass().toString());
 
         if (evt instanceof IdleStateEvent) {
             Boolean firstTime = ctx.channel().<Boolean>attr(AttributeKey.valueOf("timeout")).setIfAbsent(true);

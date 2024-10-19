@@ -1,7 +1,7 @@
 #
 # Build stage
 #
-FROM maven:3.9.5-eclipse-temurin-21-alpine AS build
+FROM maven:3.9.9-eclipse-temurin-23-alpine AS build
 COPY src /home/app/src
 COPY pom.xml /home/app
 RUN mvn -f /home/app/pom.xml clean compile assembly:single

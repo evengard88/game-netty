@@ -3,10 +3,7 @@ package me.ikurenkov.game.logic.application.impl.handler.game;
 import jakarta.enterprise.context.ApplicationScoped;
 import jakarta.inject.Inject;
 import me.ikurenkov.game.logic.application.GameHandler;
-import me.ikurenkov.game.logic.application.port.out.DisconnectPort;
-import me.ikurenkov.game.logic.application.port.out.GameStorePort;
-import me.ikurenkov.game.logic.application.port.out.MessagePort;
-import me.ikurenkov.game.logic.application.port.out.PlayerStorePort;
+import me.ikurenkov.game.logic.application.port.out.*;
 import me.ikurenkov.game.logic.domain.Game;
 import me.ikurenkov.game.logic.domain.Move;
 import me.ikurenkov.game.logic.domain.Player;
@@ -20,6 +17,8 @@ public class GameEvaluateHandler implements GameHandler {
     @Inject
     DisconnectPort disconnectPort;
     @Inject
+    GameDeletePort gameDeletePort;
+    @Inject
     GameStorePort gameStorePort;
     @Inject
     PlayerStorePort playerStorePort;
@@ -32,16 +31,16 @@ public class GameEvaluateHandler implements GameHandler {
             messagePort.sendMessage(player1.getPlayerId().getServerId(), player1.getPlayerId().getChannelId(), STR."Opponent move: \{player2.getMove()}");
             messagePort.sendMessage(player2.getPlayerId().getServerId(), player2.getPlayerId().getChannelId(), STR."Opponent move: \{player1.getMove()}");
             switch (game(player1.getMove(), player2.getMove())) {
-                case PLAYER1_WINS -> finishGameFirstWins(player1, player2);
-                case PLAYER2_WINS -> finishGameFirstWins(player2, player1);
+                case PLAYER1_WINS -> finishGameFirstWins(player1, player2, game);
+                case PLAYER2_WINS -> finishGameFirstWins(player2, player1, game);
                 case TIE -> {
                     restartGame(player1);
                     restartGame(player2);
+                    gameStorePort.store(game);
+                    playerStorePort.store(player1);
+                    playerStorePort.store(player2);
                 }
             }
-            gameStorePort.store(game);
-            playerStorePort.store(player1);
-            playerStorePort.store(player2);
         }
     }
 
@@ -75,9 +74,10 @@ public class GameEvaluateHandler implements GameHandler {
                 "It is a tie, try again");
     }
 
-    private void finishGameFirstWins(Player player1, Player player2) {
+    private void finishGameFirstWins(Player player1, Player player2, Game game) {
         disconnectPort.disconnect(player1.getPlayerId(), "You won!");
         disconnectPort.disconnect(player2.getPlayerId(), "You lost!");
+        gameDeletePort.delete(game);
     }
 
     private enum GameResult {

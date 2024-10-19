@@ -40,6 +40,9 @@ public class GameServiceImpl implements MessageReceivedUseCase, PlayerDisconnect
     private DisconnectPort disconnectPort;
     @Inject
     private PlayerDeletePort playerDeletePort;
+
+    @Inject
+    private GameDeletePort gameDeletePort;
     @Inject
     private GameGetPort gameGetPort;
     @Inject
@@ -111,6 +114,7 @@ public class GameServiceImpl implements MessageReceivedUseCase, PlayerDisconnect
             Player opponent = game.getOpponent(player);
             disconnectPort.disconnect(opponent.getPlayerId(), "Your opponent left! You won!");
             playerDeletePort.delete(opponent);
+            gameDeletePort.delete(game);
         }
     }
 

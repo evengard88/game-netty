@@ -33,6 +33,5 @@ public class RedisEventPort implements EventPort {
     public void sendMessage(String channelId, String message) {
         MessageEvent messageEvent = new MessageEvent(serverId, channelId, message);
         connection.sync().lpush("messages", mapper.toJson(messageEvent));
-//        connection.sync().lpush("messages", mapper.toJson(messageEvent));
     }
 }
